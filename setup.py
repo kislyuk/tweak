@@ -3,8 +3,6 @@
 import os, glob
 from setuptools import setup, find_packages
 
-install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
-
 setup(
     name='tweak',
     version='0.0.1',
@@ -14,7 +12,6 @@ setup(
     author_email='kislyuk@gmail.com',
     description='Application configuration engine',
     long_description=open('README.rst').read(),
-    install_requires=install_requires,
     packages = find_packages(exclude=['test']),
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
