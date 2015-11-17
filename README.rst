@@ -8,6 +8,9 @@ for serialization. Supports dict-like methods and access semantics.
 
 Installation
 ------------
+If your package does not permit dependency management, you can copy the ``Config`` class directly into your
+application from https://github.com/kislyuk/tweak/blob/master/tweak/__init__.py. Otherwise:
+
 ::
 
     pip install tweak
