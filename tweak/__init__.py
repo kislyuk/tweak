@@ -37,7 +37,7 @@ class Config(collections.MutableMapping):
         self._config_file = os.path.join(self._config_dir, "config.yml" if use_yaml else "config.json")
         if save_on_exit:
             atexit.register(self.save)
-        self._autosave = autosave
+        self._save_on_exit, self._autosave = save_on_exit, autosave
         self._parent = _parent
         if self._parent is None:
             try:
@@ -72,7 +72,7 @@ class Config(collections.MutableMapping):
 
     def _as_config(self, d):
         if isinstance(d, collections.MutableMapping):
-            return Config(autosave=self._autosave, _parent=self, _data=d)
+            return Config(save_on_exit=self._save_on_exit, autosave=self._autosave, _parent=self, _data=d)
         return d
 
     def save(self, mode=0o600):
