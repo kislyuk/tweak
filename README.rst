@@ -49,7 +49,11 @@ Using YAML::
 
     config = Config(use_yaml=True)
     ...
-    
+
+Pass ``Config(save_on_exit=False)`` to disable automatic configuration saving on Python shutdown (this is useful if you
+only want to read the config, never write it, or if you want to call ``config.save()`` manually). Pass
+``Config(autosave=True)`` to make ``save()`` run any time an assignment happens to a config object.
+
 Authors
 -------
 * Andrey Kislyuk
