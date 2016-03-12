@@ -8,7 +8,7 @@ python:
     - pypy3
 
 before_install:
-    - pip install --quiet coverage
+    - pip install --quiet coverage flake8
 
 install:
     - python setup.py install
