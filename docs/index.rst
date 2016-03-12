@@ -1,22 +1,22 @@
-.. Tweak documentation master file, created by
-   sphinx-quickstart on Tue Nov 17 11:55:06 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. include:: ../README.rst
 
-Welcome to Tweak's documentation!
-=================================
+API documentation
+=================
 
-Contents:
+.. automodule:: tweak
+   :members:
+
+Release Notes
+=============
+.. include:: ../Changes.rst
+
+
+Table of Contents
+=================
 
 .. toctree::
-   :maxdepth: 2
-
-
-
-Indices and tables
-==================
+   :maxdepth: 5
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
