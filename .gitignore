@@ -1,0 +1,11 @@
+# Reminder:
+# - A leading slash means the pattern is anchored at the root.
+# - No leading slash means the pattern matches at any depth.
+
+*.pyc
+__pycache__/
+.tox/
+*.egg-info/
+/build/
+/dist/
+/docs/_build/

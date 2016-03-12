@@ -1,15 +1,10 @@
 SHELL=/bin/bash
 
-env: requirements.txt
-	virtualenv env
-	source env/bin/activate; pip install --requirement=requirements.txt
+lint:
+	./setup.py flake8
 
-test: env
-	-pylint -E tweak
-	source env/bin/activate; ./test/test.py -v
-
-test3: env
-	python3 ./test/test.py -v
+test: lint
+	python ./test/test.py -v
 
 release: docs
 	python setup.py sdist bdist_wheel upload -s -i D2069255

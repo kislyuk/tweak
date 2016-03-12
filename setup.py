@@ -12,9 +12,10 @@ setup(
     author_email='kislyuk@gmail.com',
     description='Application configuration engine',
     long_description=open('README.rst').read(),
-    packages = find_packages(exclude=['test']),
+    packages=find_packages(exclude=['test']),
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
+    test_suite='test',
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',

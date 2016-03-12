@@ -8,7 +8,7 @@ class Config(collections.MutableMapping):
     """
     Provides a self-contained (no dependencies outside the standard library), Python 2 and 3 compatible configuration
     manager. Automatically saves and restores your application's configuration in your user home directory. Uses JSON
-    for serialization. Supports dict-like methods and access semantics.
+    or optionally YAML for serialization. Supports dict-like methods and access semantics.
 
     Examples:
 
@@ -25,7 +25,7 @@ class Config(collections.MutableMapping):
     """
     _config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
 
-    def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, _parent=None, _data=None):
+    def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False, _parent=None, _data=None):
         """
         :param name:
             Name of the application that this config belongs to. This will be used as the name of the config directory.
@@ -33,7 +33,8 @@ class Config(collections.MutableMapping):
         :param autosave: If True, save() will be called after each attribute assignment.
         """
         self._config_dir = os.path.join(self._config_home, name)
-        self._config_file = os.path.join(self._config_dir, "config.json")
+        self._use_yaml = use_yaml
+        self._config_file = os.path.join(self._config_dir, "config.yml" if use_yaml else "config.json")
         if save_on_exit:
             atexit.register(self.save)
         self._autosave = autosave
@@ -41,11 +42,33 @@ class Config(collections.MutableMapping):
         if self._parent is None:
             try:
                 with open(self._config_file) as fh:
-                    self._data = json.load(fh, object_hook=self._as_config)
-            except Exception as e:
+                    self._load(fh)
+            except Exception:
                 self._data = {}
         else:
             self._data = _data
+
+    def _load(self, stream):
+        if self._use_yaml:
+            import yaml
+            class ConfigLoader(yaml.Loader):
+                def construct_mapping(loader, node):
+                    loader.flatten_mapping(node)
+                    return self._as_config(yaml.Loader.construct_mapping(loader, node))
+            ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
+            self._data = yaml.load(stream, ConfigLoader) or {}
+        else:
+            self._data = json.load(stream, object_hook=self._as_config)
+
+    def _dump(self, stream):
+        if self._use_yaml:
+            import yaml
+            def config_representer(dumper, obj):
+                return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, obj._data.items())
+            yaml.add_representer(self.__class__, config_representer)
+            yaml.dump(self._data, stream)
+        else:
+            json.dump(self._data, stream, default=lambda obj: obj._data)
 
     def _as_config(self, d):
         if isinstance(d, collections.MutableMapping):
@@ -54,7 +77,7 @@ class Config(collections.MutableMapping):
 
     def save(self, mode=0o600):
         """
-        Serialize the config data to the user home directory as JSON.
+        Serialize the config data to the user home directory.
 
         :param mode: The octal Unix mode (permissions) for the config file.
         """
@@ -67,7 +90,7 @@ class Config(collections.MutableMapping):
                 if not (e.errno == errno.EEXIST and os.path.isdir(self._config_dir)):
                     raise
             with open(self._config_file, "wb" if sys.version_info < (3, 0) else "w") as fh:
-                json.dump(self._data, fh, default=lambda obj: obj._data)
+                self._dump(fh)
             os.chmod(self._config_file, mode)
 
     def __getitem__(self, item):
