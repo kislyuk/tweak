@@ -3,8 +3,8 @@ tweak: Application configuration engine
 Python helper class to ingest and serialize app-specific configuration
 
 Provides a self-contained (no dependencies outside the standard library), Python 2 and 3 compatible configuration
-manager. Automatically saves and restores your application's configuration in your user home directory. Uses JSON
-for serialization. Supports dict-like methods and access semantics.
+manager. Automatically saves and restores your application's configuration in your user home directory. Uses JSON or
+(optionally) YAML for serialization. Supports dict-like methods and access semantics.
 
 Installation
 ------------
@@ -45,6 +45,11 @@ Using an ``argparse.Namespace`` object returned by ``argparse.parse_args()``::
 
     config.update(vars(args))
 
+Using YAML::
+
+    config = Config(use_yaml=True)
+    ...
+    
 Authors
 -------
 * Andrey Kislyuk
