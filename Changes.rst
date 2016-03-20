@@ -1,3 +1,7 @@
+Version 0.1.2 (2016-03-20)
+--------------------------
+- Add basic logging support.
+
 Version 0.1.1 (2016-03-11)
 --------------------------
 - Fix save_on_exit=False behavior.
