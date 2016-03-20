@@ -2,7 +2,7 @@
 
 from __future__ import print_function, unicode_literals, division, absolute_import
 
-import os, sys, json, errno, collections, atexit
+import os, sys, json, errno, collections, atexit, logging
 
 class Config(collections.MutableMapping):
     """
@@ -24,6 +24,7 @@ class Config(collections.MutableMapping):
         >>> {'host': 'example.com', 'port': 9000, 'nested_config': {'foo': True}}
     """
     _config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+    _logger = logging.getLogger(__name__)
 
     def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False, _parent=None, _data=None):
         """
@@ -43,6 +44,7 @@ class Config(collections.MutableMapping):
             try:
                 with open(self._config_file) as fh:
                     self._load(fh)
+                    self._logger.info("Loaded configuration from %s", self._config_file)
             except Exception:
                 self._data = {}
         else:
@@ -92,6 +94,7 @@ class Config(collections.MutableMapping):
             with open(self._config_file, "wb" if sys.version_info < (3, 0) else "w") as fh:
                 self._dump(fh)
             os.chmod(self._config_file, mode)
+            self._logger.debug("Saved config to %s", self._config_file)
 
     def __getitem__(self, item):
         if item not in self._data:
