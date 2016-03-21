@@ -7,6 +7,21 @@ python:
     - pypy
     - pypy3
 
+matrix:
+  include:
+    - language: generic
+      python: 2.7
+      os: osx
+    - language: generic
+      python: 3.3
+      os: osx
+    - language: generic
+      python: 3.5
+      os: osx
+    - language: generic
+      python: pypy
+      os: osx
+
 before_install:
     - pip install --quiet coverage flake8 pyyaml
 
