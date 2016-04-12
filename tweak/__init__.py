@@ -32,10 +32,18 @@ class Config(collections.MutableMapping):
             Name of the application that this config belongs to. This will be used as the name of the config directory.
         :param save_on_exit: If True, save() will be called at Python interpreter exit (using an atexit handler).
         :param autosave: If True, save() will be called after each attribute assignment.
+        :param use_yaml:
+            If True, the config file will be interpreted as YAML; otherwise, as JSON. Requires the PyYAML optional
+            dependency to be installed.
         """
-        self._config_dir = os.path.join(self._config_home, name)
         self._use_yaml = use_yaml
-        self._config_file = os.path.join(self._config_dir, "config.yml" if use_yaml else "config.json")
+        self._config_var = name.upper() + "_CONFIG_FILE"
+        if self._config_var in os.environ:
+            self._config_file = os.environ[self._config_var]
+            self._config_dir = os.path.dirname(self._config_file)
+        else:
+            self._config_dir = os.path.join(self._config_home, name)
+            self._config_file = os.path.join(self._config_dir, "config.yml" if use_yaml else "config.json")
         if save_on_exit:
             atexit.register(self.save)
         self._save_on_exit, self._autosave = save_on_exit, autosave
