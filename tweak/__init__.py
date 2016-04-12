@@ -61,7 +61,7 @@ class Config(collections.MutableMapping):
         ]
         config_var = self._name.upper() + "_CONFIG_FILE"
         if config_var in os.environ:
-            config_files.append(os.environ[config_var])
+            config_files.extend(os.environ[config_var].split(":"))
         return config_files
 
     def _merge(self, updates):
