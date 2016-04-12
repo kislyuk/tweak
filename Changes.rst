@@ -1,3 +1,7 @@
+Version 0.2.0 (2016-04-12)
+--------------------------
+- Add ability to ingest config filename via *_CONFIG_FILE environment variable.
+
 Version 0.1.2 (2016-03-20)
 --------------------------
 - Add basic logging support.
