@@ -23,7 +23,8 @@ class Config(collections.MutableMapping):
 
         >>> {'host': 'example.com', 'port': 9000, 'nested_config': {'foo': True}}
     """
-    _config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+    _site_config_home = "/etc"
+    _user_config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
     _logger = logging.getLogger(__name__)
 
     def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False, _parent=None, _data=None):
@@ -36,27 +37,50 @@ class Config(collections.MutableMapping):
             If True, the config file will be interpreted as YAML; otherwise, as JSON. Requires the PyYAML optional
             dependency to be installed.
         """
-        self._use_yaml = use_yaml
-        self._config_var = name.upper() + "_CONFIG_FILE"
-        if self._config_var in os.environ:
-            self._config_file = os.environ[self._config_var]
-            self._config_dir = os.path.dirname(self._config_file)
-        else:
-            self._config_dir = os.path.join(self._config_home, name)
-            self._config_file = os.path.join(self._config_dir, "config.yml" if use_yaml else "config.json")
+        self._name, self._save_on_exit, self._autosave, self._use_yaml = name, save_on_exit, autosave, use_yaml
         if save_on_exit:
             atexit.register(self.save)
-        self._save_on_exit, self._autosave = save_on_exit, autosave
         self._parent = _parent
         if self._parent is None:
-            try:
-                with open(self._config_file) as fh:
-                    self._load(fh)
-                    self._logger.info("Loaded configuration from %s", self._config_file)
-            except Exception:
-                self._data = {}
+            self._data = {}
+            for config_file in self._config_files:
+                try:
+                    with open(config_file) as fh:
+                        self._load(fh)
+                        self._logger.info("Loaded configuration from %s", config_file)
+                except Exception as e:
+                    self._logger.debug(e)
         else:
             self._data = _data
+
+    @property
+    def _config_files(self):
+        config_files = [
+            os.path.join(self._site_config_home, self._name, "config.yml" if self._use_yaml else "config.json"),
+            os.path.join(self._user_config_home, self._name, "config.yml" if self._use_yaml else "config.json")
+        ]
+        config_var = self._name.upper() + "_CONFIG_FILE"
+        if config_var in os.environ:
+            config_files.append(os.environ[config_var])
+        return config_files
+
+    def _merge(self, updates):
+        for k, v in updates.items():
+            if isinstance(v, collections.Mapping):
+                if len(v) == 1 and list(v.keys())[0] == "$append":
+                    self[k].append(list(v.values())[0])
+                elif len(v) == 1 and list(v.keys())[0] == "$extend":
+                    self[k].extend(list(v.values())[0])
+                elif len(v) == 1 and list(v.keys())[0] == "$appendleft":
+                    self[k].insert(0, list(v.values())[0])
+                elif len(v) == 1 and list(v.keys())[0] == "$extendleft":
+                    self[k][0:0] = list(v.values())[0]
+                else:
+                    if k not in self:
+                        self[k] = {}
+                    self[k]._merge(v)
+            else:
+                self[k] = updates[k]
 
     def _load(self, stream):
         if self._use_yaml:
@@ -66,9 +90,9 @@ class Config(collections.MutableMapping):
                     loader.flatten_mapping(node)
                     return self._as_config(yaml.Loader.construct_mapping(loader, node))
             ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
-            self._data = yaml.load(stream, ConfigLoader) or {}
+            self._merge(yaml.load(stream, ConfigLoader) or {})
         else:
-            self._data = json.load(stream, object_hook=self._as_config)
+            self._merge(json.load(stream, object_hook=self._as_config))
 
     def _dump(self, stream):
         if self._use_yaml:
@@ -94,15 +118,16 @@ class Config(collections.MutableMapping):
         if self._parent is not None:
             self._parent.save(mode=mode)
         else:
+            config_dir = os.path.basename(self._config_files[-1])
             try:
-                os.makedirs(self._config_dir)
+                os.makedirs(config_dir)
             except OSError as e:
-                if not (e.errno == errno.EEXIST and os.path.isdir(self._config_dir)):
+                if not (e.errno == errno.EEXIST and os.path.isdir(config_dir)):
                     raise
-            with open(self._config_file, "wb" if sys.version_info < (3, 0) else "w") as fh:
+            with open(self._config_files[-1], "wb" if sys.version_info < (3, 0) else "w") as fh:
                 self._dump(fh)
-            os.chmod(self._config_file, mode)
-            self._logger.debug("Saved config to %s", self._config_file)
+            os.chmod(self._config_files[-1], mode)
+            self._logger.debug("Saved config to %s", self._config_files[-1])
 
     def __getitem__(self, item):
         if item not in self._data:

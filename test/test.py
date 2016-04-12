@@ -49,5 +49,27 @@ class TestTweak(unittest.TestCase):
         config.test4.save()
         print(config)
 
+    def test_merge(self):
+        config = Config()
+        config._merge({})
+        config._merge({"m": {"i": 1}})
+        self.assertEqual(config["m"], {"i": 1})
+        config._merge({"m": {"j": 2}})
+        self.assertEqual(config["m"], {"i": 1, "j": 2})
+        config._merge({"m": {"j": range(8)}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8)})
+        config._merge({"m": {"k": []}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": []})
+        config._merge({"m": {"k": {"$append": "v"}}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": ["v"]})
+        config._merge({"m": {"k": {"$append": "v"}}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": ["v", "v"]})
+        config._merge({"m": {"k": {"$extend": ["z", "z"]}}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": ["v", "v", "z", "z"]})
+        config._merge({"m": {"k": {"$extendleft": ["z", "z"]}}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": ["z", "z", "v", "v", "z", "z"]})
+        config._merge({"m": {"k": {"$appendleft": 5}}})
+        self.assertEqual(config["m"], {"i": 1, "j": range(8), "k": [5, "z", "z", "v", "v", "z", "z"]})
+
 if __name__ == '__main__':
     unittest.main()
