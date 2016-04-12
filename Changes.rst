@@ -1,3 +1,7 @@
+Version 0.3.1 (2016-04-12)
+--------------------------
+- Fix bug in saving to a relative path
+
 Version 0.3.0 (2016-04-12)
 --------------------------
 - Add config hierarchy merging and array append functionality
