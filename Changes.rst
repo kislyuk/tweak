@@ -1,3 +1,7 @@
+Version 0.3.0 (2016-04-12)
+--------------------------
+- Add config hierarchy merging and array append functionality
+
 Version 0.2.0 (2016-04-12)
 --------------------------
 - Add ability to ingest config filename via *_CONFIG_FILE environment variable.
