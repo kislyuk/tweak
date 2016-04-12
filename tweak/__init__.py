@@ -118,7 +118,7 @@ class Config(collections.MutableMapping):
         if self._parent is not None:
             self._parent.save(mode=mode)
         else:
-            config_dir = os.path.basename(self._config_files[-1])
+            config_dir = os.path.dirname(os.path.abspath(self._config_files[-1]))
             try:
                 os.makedirs(config_dir)
             except OSError as e:
