@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tweak',
-    version='0.3.1',
+    version='0.3.2',
     url='https://github.com/kislyuk/tweak',
     license='Apache Software License',
     author='Andrey Kislyuk',
