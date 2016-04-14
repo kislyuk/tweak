@@ -64,6 +64,63 @@ enumerated in the following order:
 - User configuration source, ``~/.config/NAME/config.(yml|json)``
 - Any sources listed in the colon-delimited variable ``NAME_CONFIG_FILE``
 
+Array merge operators
+~~~~~~~~~~~~~~~~~~~~~
+
+When loading a chain of configuration sources, Tweak uses recursive dictionary merging to combine the
+sources. Additionally, when the original config value is a list, Tweak supports array manipulation operators::
+
+    In [1]: from tweak import Config
+
+    In [2]: c = Config()
+
+    In [3]: c.update(x=[1, 2, 3])
+
+    In [4]: c
+    Out[4]: {'x': [1, 2, 3]}
+
+    In [5]: c.update(x={"$append": 4})
+
+    In [6]: c
+    Out[6]: {'x': [1, 2, 3, 4]}
+
+    In [7]: c.update(x={"$extend": [5, 6]})
+
+    In [8]: c
+    Out[8]: {'x': [1, 2, 3, 4, 5, 6]}
+
+    In [9]: c.update(x={"$appendleft": 0})
+
+    In [10]: c
+    Out[10]: {'x': [0, 1, 2, 3, 4, 5, 6]}
+
+    In [11]: c.update(x={"$extendleft": [-2, -1]})
+
+    In [12]: c
+    Out[12]: {'x': [-2, -1, 0, 1, 2, 3, 4, 5, 6]}
+
+    In [13]: c.update(x={"$remove": 0})
+
+    In [14]: c
+    Out[14]: {'x': [-2, -1, 1, 2, 3, 4, 5, 6]}
+
+Each operator (``$append``, ``$extend``, ``$appendleft``, ``$extendleft``, ``$remove``) must be the only key in the
+dictionary representing the update, and the value being updated must be a list. For example, in the following set of two
+YAML files, the second file extends the list in the first file.
+
+``/etc/NAME/config.yml``::
+
+    x:
+     - y
+     - z
+
+``~/.config/NAME/config.yml``::
+
+    x:
+     - $extend:
+       - a
+       - b
+
 Authors
 -------
 * Andrey Kislyuk
