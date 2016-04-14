@@ -54,6 +54,16 @@ Pass ``Config(save_on_exit=False)`` to disable automatic configuration saving on
 only want to read the config, never write it, or if you want to call ``config.save()`` manually). Pass
 ``Config(autosave=True)`` to make ``save()`` run any time an assignment happens to a config object.
 
+Configuration ingestion order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tweak supports ingesting configuration from a configurable array of sources. Each source is a JSON or YAML file.
+Configuration sources that follow the first source update the configuration using recursive dictionary merging. Sources are
+enumerated in the following order:
+
+- Site-wide configuration source, ``/etc/NAME/config.(yml|json)``
+- User configuration source, ``~/.config/NAME/config.(yml|json)``
+- Any sources listed in the colon-delimited variable ``NAME_CONFIG_FILE``
+
 Authors
 -------
 * Andrey Kislyuk
