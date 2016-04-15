@@ -64,21 +64,26 @@ class Config(collections.MutableMapping):
             config_files.extend(os.environ[config_var].split(":"))
         return config_files
 
-    def _merge(self, updates):
+    def update(self, *args, **kwargs):
+        updates = collections.OrderedDict()
+        updates.update(*args, **kwargs)
         for k, v in updates.items():
             if isinstance(v, collections.Mapping):
                 if len(v) == 1 and list(v.keys())[0] == "$append":
                     self[k].append(list(v.values())[0])
                 elif len(v) == 1 and list(v.keys())[0] == "$extend":
                     self[k].extend(list(v.values())[0])
-                elif len(v) == 1 and list(v.keys())[0] == "$appendleft":
-                    self[k].insert(0, list(v.values())[0])
+                elif len(v) == 1 and list(v.keys())[0] == "$insert":
+                    for position, value in list(v.values())[0].items():
+                        self[k].insert(position, value)
                 elif len(v) == 1 and list(v.keys())[0] == "$extendleft":
                     self[k][0:0] = list(v.values())[0]
+                elif len(v) == 1 and list(v.keys())[0] == "$remove":
+                    self[k].remove(list(v.values())[0])
                 else:
                     if k not in self:
                         self[k] = {}
-                    self[k]._merge(v)
+                    self[k].update(v)
             else:
                 self[k] = updates[k]
 
@@ -90,9 +95,9 @@ class Config(collections.MutableMapping):
                     loader.flatten_mapping(node)
                     return self._as_config(yaml.Loader.construct_mapping(loader, node))
             ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
-            self._merge(yaml.load(stream, ConfigLoader) or {})
+            self.update(yaml.load(stream, ConfigLoader) or {})
         else:
-            self._merge(json.load(stream, object_hook=self._as_config))
+            self.update(json.load(stream, object_hook=self._as_config))
 
     def _dump(self, stream):
         if self._use_yaml:
