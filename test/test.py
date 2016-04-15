@@ -74,14 +74,14 @@ class TestTweak(unittest.TestCase):
         self.assertEqual(config["m"], {"i": 1, "j": [7, 8], "k": [5, "z", "v", "v", "z", "z"]})
 
     def test_ingest(self):
-        with tempfile.NamedTemporaryFile() as cf1, tempfile.NamedTemporaryFile() as cf2:
+        with tempfile.NamedTemporaryFile("w") as cf1, tempfile.NamedTemporaryFile("w") as cf2:
             json.dump(dict(x="foo", y="bar", z={}), cf1)
             cf1.flush()
-            json.dump(dict(x=range(8), z={None: None}, t=4.5), cf2)
+            json.dump(dict(x=list(range(8)), z={None: None}, t=4.5), cf2)
             cf2.flush()
             os.environ["TWEAK_TEST_CONFIG_FILE"] = ":".join([cf1.name, cf2.name])
             config = Config("TWEAK_TEST")
-            self.assertEqual(dict(config), {'y': 'bar', 'x': range(8), 'z': {'null': None}, 't': 4.5})
+            self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
 
 if __name__ == '__main__':
     unittest.main()
