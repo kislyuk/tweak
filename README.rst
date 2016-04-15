@@ -89,7 +89,7 @@ sources. Additionally, when the original config value is a list, Tweak supports 
     In [8]: c
     Out[8]: {'x': [1, 2, 3, 4, 5, 6]}
 
-    In [9]: c.update(x={"$appendleft": 0})
+    In [9]: c.update(x={"$insert": {0: 0}})
 
     In [10]: c
     Out[10]: {'x': [0, 1, 2, 3, 4, 5, 6]}
@@ -104,7 +104,7 @@ sources. Additionally, when the original config value is a list, Tweak supports 
     In [14]: c
     Out[14]: {'x': [-2, -1, 1, 2, 3, 4, 5, 6]}
 
-Each operator (``$append``, ``$extend``, ``$appendleft``, ``$extendleft``, ``$remove``) must be the only key in the
+Each operator (``$append``, ``$extend``, ``$insert``, ``$extendleft``, ``$remove``) must be the only key in the
 dictionary representing the update, and the value being updated must be a list. For example, in the following set of two
 YAML files, the second file extends the list in the first file.
 
