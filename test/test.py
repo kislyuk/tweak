@@ -82,6 +82,7 @@ class TestTweak(unittest.TestCase):
             os.environ["TWEAK_TEST_CONFIG_FILE"] = ":".join([cf1.name, cf2.name])
             config = Config("TWEAK_TEST")
             self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
+            self.assertEqual(len(config.config_files), 4)
 
 if __name__ == '__main__':
     unittest.main()

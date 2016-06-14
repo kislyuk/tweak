@@ -43,7 +43,7 @@ class Config(collections.MutableMapping):
         self._parent = _parent
         if self._parent is None:
             self._data = {}
-            for config_file in self._config_files:
+            for config_file in self.config_files:
                 try:
                     with open(config_file) as fh:
                         self._load(fh)
@@ -54,7 +54,7 @@ class Config(collections.MutableMapping):
             self._data = _data
 
     @property
-    def _config_files(self):
+    def config_files(self):
         config_files = [
             os.path.join(self._site_config_home, self._name, "config.yml" if self._use_yaml else "config.json"),
             os.path.join(self._user_config_home, self._name, "config.yml" if self._use_yaml else "config.json")
@@ -123,16 +123,16 @@ class Config(collections.MutableMapping):
         if self._parent is not None:
             self._parent.save(mode=mode)
         else:
-            config_dir = os.path.dirname(os.path.abspath(self._config_files[-1]))
+            config_dir = os.path.dirname(os.path.abspath(self.config_files[-1]))
             try:
                 os.makedirs(config_dir)
             except OSError as e:
                 if not (e.errno == errno.EEXIST and os.path.isdir(config_dir)):
                     raise
-            with open(self._config_files[-1], "wb" if sys.version_info < (3, 0) else "w") as fh:
+            with open(self.config_files[-1], "wb" if sys.version_info < (3, 0) else "w") as fh:
                 self._dump(fh)
-            os.chmod(self._config_files[-1], mode)
-            self._logger.debug("Saved config to %s", self._config_files[-1])
+            os.chmod(self.config_files[-1], mode)
+            self._logger.debug("Saved config to %s", self.config_files[-1])
 
     def __getitem__(self, item):
         if item not in self._data:
