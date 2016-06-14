@@ -1,3 +1,7 @@
+Version 0.3.3 (2016-06-14)
+--------------------------
+- Add config_files to public interface
+
 Version 0.3.2 (2016-04-12)
 --------------------------
 - Treat *_CONFIG_FILE as colon delimited
