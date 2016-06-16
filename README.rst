@@ -128,7 +128,7 @@ Authors
 Links
 -----
 * `Project home page (GitHub) <https://github.com/kislyuk/tweak>`_
-* `Documentation (Read the Docs) <https://tweak.readthedocs.org/en/latest/>`_
+* `Documentation (Read the Docs) <https://tweak.readthedocs.io/en/latest/>`_
 * `Package distribution (PyPI) <https://pypi.python.org/pypi/tweak>`_
 
 Bugs
@@ -150,4 +150,4 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
 .. image:: https://img.shields.io/pypi/l/tweak.svg
         :target: https://pypi.python.org/pypi/tweak
 .. image:: https://readthedocs.org/projects/tweak/badge/?version=latest
-        :target: https://tweak.readthedocs.org/
+        :target: https://tweak.readthedocs.io/
