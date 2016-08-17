@@ -117,7 +117,7 @@ YAML files, the second file extends the list in the first file.
 ``~/.config/NAME/config.yml``::
 
     x:
-     - $extend:
+     $extend:
        - a
        - b
 
