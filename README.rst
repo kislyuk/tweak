@@ -121,6 +121,14 @@ YAML files, the second file extends the list in the first file.
        - a
        - b
 
+Include directives
+~~~~~~~~~~~~~~~~~~
+
+The optional ``Config(allow_includes=True)`` keyword argument can be used to trigger processing of include directives in
+config files. For each config source file ingested, a top level ``include`` key can contain a string or array of
+strings. Each of these strings will be globbed and ingested before the file contianing the directive (e.g. ``{"include":
+"config.d/*"}`` to ingest a directory of config files).
+
 Authors
 -------
 * Andrey Kislyuk

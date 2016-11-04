@@ -84,5 +84,16 @@ class TestTweak(unittest.TestCase):
             self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
             self.assertEqual(len(config.config_files), 4)
 
+    def test_include(self):
+        with tempfile.NamedTemporaryFile("w") as cf1, tempfile.NamedTemporaryFile("w") as cf2:
+            json.dump(dict(x="foo", y="bar", z={}), cf1)
+            cf1.flush()
+            json.dump(dict(x=list(range(8)), z={None: None}, t=4.5, include=os.path.basename(cf1.name) + "*"), cf2)
+            cf2.flush()
+            os.environ["TWEAK_TEST_CONFIG_FILE"] = cf2.name
+            config = Config("TWEAK_TEST", allow_includes=True)
+            self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
+            self.assertEqual(len(config.config_files), 3)
+
 if __name__ == '__main__':
     unittest.main()

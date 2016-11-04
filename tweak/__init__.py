@@ -2,7 +2,7 @@
 
 from __future__ import print_function, unicode_literals, division, absolute_import
 
-import os, sys, json, errno, collections, atexit, logging
+import os, sys, json, errno, collections, atexit, logging, glob
 
 class Config(collections.MutableMapping):
     """
@@ -27,7 +27,8 @@ class Config(collections.MutableMapping):
     _user_config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False, _parent=None, _data=None):
+    def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False,
+                 allow_includes=False, _parent=None, _data=None):
         """
         :param name:
             Name of the application that this config belongs to. This will be used as the name of the config directory.
@@ -38,6 +39,7 @@ class Config(collections.MutableMapping):
             dependency to be installed.
         """
         self._name, self._save_on_exit, self._autosave, self._use_yaml = name, save_on_exit, autosave, use_yaml
+        self._allow_includes = allow_includes
         if save_on_exit:
             atexit.register(self.save)
         self._parent = _parent
@@ -47,7 +49,6 @@ class Config(collections.MutableMapping):
                 try:
                     with open(config_file) as fh:
                         self._load(fh)
-                        self._logger.info("Loaded configuration from %s", config_file)
                 except Exception as e:
                     self._logger.debug(e)
         else:
@@ -87,7 +88,7 @@ class Config(collections.MutableMapping):
             else:
                 self[k] = updates[k]
 
-    def _load(self, stream):
+    def _parse(self, stream):
         if self._use_yaml:
             import yaml
             class ConfigLoader(yaml.Loader):
@@ -95,9 +96,24 @@ class Config(collections.MutableMapping):
                     loader.flatten_mapping(node)
                     return self._as_config(yaml.Loader.construct_mapping(loader, node))
             ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
-            self.update(yaml.load(stream, ConfigLoader) or {})
+            return yaml.load(stream, ConfigLoader) or {}
         else:
-            self.update(json.load(stream, object_hook=self._as_config))
+            return json.load(stream, object_hook=self._as_config)
+
+    def _load(self, stream):
+        contents = self._parse(stream)
+        if self._allow_includes and "include" in contents:
+            includes = contents["include"] if isinstance(contents["include"], list) else [contents["include"]]
+            for include in includes:
+                for include_file in glob.glob(os.path.join(os.path.dirname(stream.name), include)):
+                    try:
+                        with open(include_file) as fh:
+                            self._load(fh)
+                    except Exception as e:
+                        self._logger.debug(e)
+            del contents["include"]
+        self.update(contents)
+        self._logger.info("Loaded configuration from %s", stream.name)
 
     def _dump(self, stream):
         if self._use_yaml:
