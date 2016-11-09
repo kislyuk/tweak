@@ -103,7 +103,7 @@ class Config(collections.MutableMapping):
     def _load(self, stream):
         contents = self._parse(stream)
         if self._allow_includes and "include" in contents:
-            includes = contents["include"] if isinstance(contents["include"], list) else [contents["include"]]
+            includes = contents["include"] if isinstance(contents["include"], (list, tuple)) else [contents["include"]]
             for include in includes:
                 for include_file in glob.glob(os.path.join(os.path.dirname(stream.name), include)):
                     try:
