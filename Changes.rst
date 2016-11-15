@@ -1,3 +1,7 @@
+Version 0.4.0 (2016-11-15)
+--------------------------
+- Add support for include directives
+
 Version 0.3.3 (2016-06-14)
 --------------------------
 - Add config_files to public interface
