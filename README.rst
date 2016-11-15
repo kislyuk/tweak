@@ -153,8 +153,6 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
         :target: https://coveralls.io/r/kislyuk/tweak?branch=master
 .. image:: https://img.shields.io/pypi/v/tweak.svg
         :target: https://pypi.python.org/pypi/tweak
-.. image:: https://img.shields.io/pypi/dm/tweak.svg
-        :target: https://pypi.python.org/pypi/tweak
 .. image:: https://img.shields.io/pypi/l/tweak.svg
         :target: https://pypi.python.org/pypi/tweak
 .. image:: https://readthedocs.org/projects/tweak/badge/?version=latest
