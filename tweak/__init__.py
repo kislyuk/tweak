@@ -91,6 +91,7 @@ class Config(collections.MutableMapping):
     def _parse(self, stream):
         if self._use_yaml:
             import yaml
+
             class ConfigLoader(yaml.Loader):
                 def construct_mapping(loader, node):
                     loader.flatten_mapping(node)
@@ -118,6 +119,7 @@ class Config(collections.MutableMapping):
     def _dump(self, stream):
         if self._use_yaml:
             import yaml
+
             def config_representer(dumper, obj):
                 return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, obj._data.items())
             yaml.add_representer(self.__class__, config_representer)
