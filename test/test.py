@@ -26,7 +26,7 @@ class TestTweak(unittest.TestCase):
             parser.add_argument("-" + arg[0], "--" + arg, nargs="?")
         parser.add_argument("--foo")
         parser.add_argument("--bar")
-        args = parser.parse_args()
+        args = parser.parse_args([])
         config.update(vars(args))
         print(config)
 
