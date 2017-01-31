@@ -9,7 +9,7 @@ python:
   - pypy3
 
 before_install:
-  - pip install --quiet codecov
+  - pip install --quiet codecov pyyaml
 
 install:
   - make install
