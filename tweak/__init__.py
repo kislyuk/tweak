@@ -70,21 +70,24 @@ class Config(collections.MutableMapping):
         updates.update(*args, **kwargs)
         for k, v in updates.items():
             if isinstance(v, collections.Mapping):
-                if len(v) == 1 and list(v.keys())[0] == "$append":
-                    self[k].append(list(v.values())[0])
-                elif len(v) == 1 and list(v.keys())[0] == "$extend":
-                    self[k].extend(list(v.values())[0])
-                elif len(v) == 1 and list(v.keys())[0] == "$insert":
-                    for position, value in list(v.values())[0].items():
-                        self[k].insert(position, value)
-                elif len(v) == 1 and list(v.keys())[0] == "$extendleft":
-                    self[k][0:0] = list(v.values())[0]
-                elif len(v) == 1 and list(v.keys())[0] == "$remove":
-                    self[k].remove(list(v.values())[0])
-                else:
-                    if k not in self:
-                        self[k] = {}
-                    self[k].update(v)
+                try:
+                    if len(v) == 1 and list(v.keys())[0] == "$append":
+                        self[k].append(list(v.values())[0])
+                    elif len(v) == 1 and list(v.keys())[0] == "$extend":
+                        self[k].extend(list(v.values())[0])
+                    elif len(v) == 1 and list(v.keys())[0] == "$insert":
+                        for position, value in list(v.values())[0].items():
+                            self[k].insert(position, value)
+                    elif len(v) == 1 and list(v.keys())[0] == "$extendleft":
+                        self[k][0:0] = list(v.values())[0]
+                    elif len(v) == 1 and list(v.keys())[0] == "$remove":
+                        self[k].remove(list(v.values())[0])
+                    else:
+                        if k not in self:
+                            self[k] = {}
+                        self[k].update(v)
+                except Exception as e:
+                    self._logger.debug(e)
             else:
                 self[k] = updates[k]
 
