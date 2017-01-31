@@ -1,3 +1,8 @@
+Changes for v0.5.0 (2017-01-30)
+===============================
+
+-  Tolerate array merge operator failures when ingesting
+
 Version 0.4.0 (2016-11-15)
 --------------------------
 - Add support for include directives
