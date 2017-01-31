@@ -3,12 +3,15 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, sys, unittest, tempfile, json
+import os, sys, unittest, tempfile, json, logging
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tweak import Config
 
 class TestTweak(unittest.TestCase):
+    def setUp(self):
+        logging.basicConfig(level="DEBUG")
+
     def test_basic_statements(self):
         config = Config()
         print(config)

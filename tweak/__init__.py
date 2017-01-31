@@ -50,6 +50,8 @@ class Config(collections.MutableMapping):
                     with open(config_file) as fh:
                         self._load(fh)
                 except Exception as e:
+                    if isinstance(e, ImportError):
+                        raise
                     self._logger.debug(e)
         else:
             self._data = _data
