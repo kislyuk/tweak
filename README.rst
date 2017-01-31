@@ -1,10 +1,11 @@
 tweak: Application configuration engine
 =======================================
-Python helper class to ingest and serialize app-specific configuration
+Tweak is a Python helper class to ingest and serialize app-specific configuration.
 
-Provides a self-contained (no dependencies outside the standard library), Python 2 and 3 compatible configuration
-manager. Automatically saves and restores your application's configuration in your user home directory. Uses JSON or
-(optionally) YAML for serialization. Supports dict-like methods and access semantics.
+Tweak provides a self-contained (no dependencies outside the standard library), Python 2 and 3 compatible configuration
+manager. It automatically saves and restores your application's configuration in your user home directory. It uses JSON or
+(optionally) YAML for serialization. It supports dict-like methods and access semantics, hierarchical configuration sources,
+and array merge operators for layering configuration options (see below).
 
 Installation
 ------------
