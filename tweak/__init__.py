@@ -102,7 +102,7 @@ class Config(collections.MutableMapping):
                     loader.flatten_mapping(node)
                     return self._as_config(yaml.Loader.construct_mapping(loader, node))
             ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
-            return yaml.load(stream, ConfigLoader) or {}
+            return yaml.safe_load(stream, ConfigLoader) or {}
         else:
             return json.load(stream, object_hook=self._as_config)
 
