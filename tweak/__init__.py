@@ -67,6 +67,10 @@ class Config(collections.MutableMapping):
             config_files.extend(os.environ[config_var].split(":"))
         return config_files
 
+    @property
+    def user_config_dir(self):
+        return os.path.join(self._user_config_home, self._name)
+
     def update(self, *args, **kwargs):
         updates = collections.OrderedDict()
         updates.update(*args, **kwargs)
