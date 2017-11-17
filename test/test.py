@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, sys, unittest, tempfile, json, logging
+import os, sys, unittest, tempfile, json, logging, pickle
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tweak import Config
@@ -51,6 +51,12 @@ class TestTweak(unittest.TestCase):
         print(config.test4.x)
         config.test4.save()
         print(config)
+
+    def test_picklable(self):
+        config = Config()
+        config.foo = 1
+        config = pickle.loads(pickle.dumps(config))
+        self.assertEqual(config.foo, 1)
 
     def test_merge(self):
         config = Config()

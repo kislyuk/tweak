@@ -172,11 +172,13 @@ class Config(collections.MutableMapping):
             self.save()
 
     def __getattr__(self, attr):
-        return self.__getitem__(attr)
+        if attr not in self._data:
+            raise AttributeError(attr)
+        return self._data[attr]
 
     def __setattr__(self, attr, value):
         if attr.startswith("_"):
-            self.__dict__[attr] = value
+            object.__setattr__(self, attr, value)
         else:
             self.__setitem__(attr, value)
 
@@ -192,3 +194,6 @@ class Config(collections.MutableMapping):
 
     def __repr__(self):
         return repr(self._data)
+
+    def __setstate__(self, state):
+        self.__dict__ = state
