@@ -1,3 +1,10 @@
+Changes for v0.6.0 (2017-11-16)
+===============================
+
+-  Follow getattr protocol and add pickle compatibility
+
+-  Add user\_config\_dir
+
 Changes for v0.5.1 (2017-01-30)
 ===============================
 
