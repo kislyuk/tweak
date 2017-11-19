@@ -1,3 +1,8 @@
+Changes for v0.6.4 (2017-11-19)
+===============================
+
+Fix logic error introduced in 9e6a025, add test
+
 Changes for v0.6.3 (2017-11-16)
 ===============================
 
