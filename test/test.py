@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os, sys, unittest, tempfile, json, logging, pickle
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # noqa
 from tweak import Config
 
 class TestTweak(unittest.TestCase):
@@ -93,6 +93,10 @@ class TestTweak(unittest.TestCase):
             self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
             self.assertEqual(len(config.config_files), 4)
 
+            config = Config("TWEAK_TEST", use_yaml=True)
+            self.assertEqual(dict(config), {'y': 'bar', 'x': list(range(8)), 'z': {'null': None}, 't': 4.5})
+            self.assertEqual(len(config.config_files), 4)
+
     def test_ingest_with_merge_operator_failure(self):
         with tempfile.NamedTemporaryFile("w") as cf1, tempfile.NamedTemporaryFile("w") as cf2:
             json.dump(dict(x="foo", y="bar", z={}), cf1)
@@ -118,6 +122,7 @@ class TestTweak(unittest.TestCase):
             config = Config("TWEAK_TEST")
             self.assertEqual(dict(config), {'x': list(range(8)), 'z': {'null': None}, 't': 4.5, 'include': incl_expr})
             self.assertEqual(len(config.config_files), 3)
+
 
 if __name__ == '__main__':
     unittest.main()
