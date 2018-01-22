@@ -1,3 +1,8 @@
+Changes for v0.6.7 (2018-01-21)
+===============================
+
+-  Disregard save\_on\_exit in non-root config objects (fixup)
+
 Changes for v0.6.6 (2018-01-21)
 ===============================
 
