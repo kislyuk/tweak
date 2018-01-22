@@ -40,7 +40,7 @@ class Config(collections.MutableMapping):
         """
         self._name, self._autosave, self._use_yaml = name, autosave, use_yaml
         self._allow_includes = allow_includes
-        if save_on_exit and not _parent:
+        if save_on_exit and _parent is None:
             atexit.register(self.save)
         self._parent = _parent
         if self._parent is None:
