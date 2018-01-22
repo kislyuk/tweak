@@ -38,9 +38,9 @@ class Config(collections.MutableMapping):
             If True, the config file will be interpreted as YAML; otherwise, as JSON. Requires the PyYAML optional
             dependency to be installed.
         """
-        self._name, self._save_on_exit, self._autosave, self._use_yaml = name, save_on_exit, autosave, use_yaml
+        self._name, self._autosave, self._use_yaml = name, autosave, use_yaml
         self._allow_includes = allow_includes
-        if save_on_exit:
+        if save_on_exit and not self._parent:
             atexit.register(self.save)
         self._parent = _parent
         if self._parent is None:
@@ -138,7 +138,7 @@ class Config(collections.MutableMapping):
 
     def _as_config(self, d):
         if isinstance(d, collections.MutableMapping):
-            return Config(save_on_exit=self._save_on_exit, autosave=self._autosave, _parent=self, _data=d)
+            return Config(autosave=self._autosave, _parent=self, _data=d)
         return d
 
     def save(self, mode=0o600):
