@@ -132,7 +132,7 @@ class Config(collections.MutableMapping):
             def config_representer(dumper, obj):
                 return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, obj._data.items())
             yaml.add_representer(self.__class__, config_representer)
-            yaml.dump(self._data, stream)
+            yaml.safe_dump(self._data, stream, default_flow_style=False)
         else:
             json.dump(self._data, stream, default=lambda obj: obj._data)
 
