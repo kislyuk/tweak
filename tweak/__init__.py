@@ -129,16 +129,20 @@ class Config(collections.MutableMapping):
         if self._use_yaml:
             import yaml
 
+            class OrderedDumper(yaml.SafeDumper):
+                pass
+
             def config_representer(dumper, obj):
                 return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, obj._data.items())
-            yaml.add_representer(self.__class__, config_representer)
-            yaml.safe_dump(self._data, stream, default_flow_style=False)
+
+            OrderedDumper.add_representer(self.__class__, config_representer)
+            yaml.dump(self._data, stream, default_flow_style=False, Dumper=OrderedDumper)
         else:
             json.dump(self._data, stream, default=lambda obj: obj._data)
 
     def _as_config(self, d):
         if isinstance(d, collections.MutableMapping):
-            return Config(autosave=self._autosave, _parent=self, _data=d)
+            return self.__class__(autosave=self._autosave, _parent=self, _data=d)
         return d
 
     def save(self, mode=0o600):
