@@ -1,3 +1,8 @@
+Changes for v1.0.2 (2019-02-11)
+===============================
+
+-  Allow saving in Config subclasses with YAML
+
 Changes for v1.0.1 (2019-02-11)
 ===============================
 
