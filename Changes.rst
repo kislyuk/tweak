@@ -1,3 +1,8 @@
+Changes for v1.0.1 (2019-02-11)
+===============================
+
+-  Prevent yaml from using flow style
+
 Changes for v1.0.0 (2018-09-04)
 ===============================
 
