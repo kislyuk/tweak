@@ -125,7 +125,7 @@ class Config(collections.MutableMapping):
         self.update(contents)
         self._logger.info("Loaded configuration from %s", stream.name)
 
-    def _dump(self, stream):
+    def _dump(self, stream=None):
         if self._use_yaml:
             import yaml
 
@@ -136,9 +136,10 @@ class Config(collections.MutableMapping):
                 return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, obj._data.items())
 
             OrderedDumper.add_representer(self.__class__, config_representer)
-            yaml.dump(self._data, stream, default_flow_style=False, Dumper=OrderedDumper)
-        else:
-            json.dump(self._data, stream, default=lambda obj: obj._data)
+            return yaml.dump(self._data, stream=stream, default_flow_style=False, Dumper=OrderedDumper)
+        elif stream:
+            return json.dump(self._data, stream, default=lambda obj: obj._data)
+        return json.dumps(self._data, default=lambda obj: obj._data)
 
     def _as_config(self, d):
         if isinstance(d, collections.MutableMapping):
@@ -154,14 +155,22 @@ class Config(collections.MutableMapping):
         if self._parent is not None:
             self._parent.save(mode=mode)
         else:
+            contents = self._dump()
             config_dir = os.path.dirname(os.path.abspath(self.config_files[-1]))
+            try:
+                with open(self.config_files[-1]) as fh:
+                    if fh.read() == contents:
+                        self._logger.debug("Config file %s unchanged", self.config_files[-1])
+                        return
+            except Exception:
+                pass
             try:
                 os.makedirs(config_dir)
             except OSError as e:
                 if not (e.errno == errno.EEXIST and os.path.isdir(config_dir)):
                     raise
             with open(self.config_files[-1], "wb" if sys.version_info < (3, 0) else "w") as fh:
-                self._dump(fh)
+                fh.write(contents)
             os.chmod(self.config_files[-1], mode)
             self._logger.debug("Saved config to %s", self.config_files[-1])
 
