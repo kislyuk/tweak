@@ -1,3 +1,8 @@
+Changes for v1.0.3 (2019-07-12)
+===============================
+
+-  Save only when contents don’t match
+
 Changes for v1.0.2 (2019-02-11)
 ===============================
 
