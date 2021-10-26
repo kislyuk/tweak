@@ -2,9 +2,12 @@
 
 from __future__ import print_function, unicode_literals, division, absolute_import
 
-import os, sys, json, errno, collections, atexit, logging, glob
+import os, sys, json, errno, atexit, logging, glob
+from collections import OrderedDict
+from collections.abc import Mapping, MutableMapping
 
-class Config(collections.MutableMapping):
+
+class Config(MutableMapping):
     """
     Provides a self-contained (no dependencies outside the standard library), Python 2 and 3 compatible configuration
     manager. Automatically saves and restores your application's configuration in your user home directory. Uses JSON
@@ -72,10 +75,10 @@ class Config(collections.MutableMapping):
         return os.path.join(self._user_config_home, self._name)
 
     def update(self, *args, **kwargs):
-        updates = collections.OrderedDict()
+        updates = OrderedDict()
         updates.update(*args, **kwargs)
         for k, v in updates.items():
-            if isinstance(v, collections.Mapping):
+            if isinstance(v, Mapping):
                 try:
                     if len(v) == 1 and list(v.keys())[0] == "$append":
                         self[k].append(list(v.values())[0])
@@ -142,7 +145,7 @@ class Config(collections.MutableMapping):
         return json.dumps(self._data, default=lambda obj: obj._data)
 
     def _as_config(self, d):
-        if isinstance(d, collections.MutableMapping):
+        if isinstance(d, MutableMapping):
             return self.__class__(autosave=self._autosave, _parent=self, _data=d)
         return d
 

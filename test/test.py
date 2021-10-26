@@ -5,8 +5,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os, sys, unittest, tempfile, json, logging, pickle
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # noqa
-from tweak import Config
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from tweak import Config  # noqa
+
 
 class TestTweak(unittest.TestCase):
     def setUp(self):

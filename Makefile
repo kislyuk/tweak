@@ -2,7 +2,7 @@ test_deps:
 	pip install coverage flake8 wheel
 
 lint: test_deps
-	./setup.py flake8
+	flake8 $$(python setup.py --name) test
 
 test: test_deps lint
 	coverage run --source=$$(python setup.py --name) ./test/test.py
@@ -14,7 +14,7 @@ docs:
 	$(MAKE) -C docs html
 
 install: clean
-	pip install wheel
+	pip install wheel pyyaml
 	python setup.py bdist_wheel
 	pip install --upgrade dist/*.whl
 
