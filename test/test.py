@@ -1,9 +1,12 @@
 #!/usr/bin/env python
-# coding: utf-8
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import os, sys, unittest, tempfile, json, logging, pickle
+import json
+import logging
+import os
+import pickle
+import sys
+import tempfile
+import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -26,6 +29,7 @@ class TestTweak(unittest.TestCase):
             config["token"] = "т"
 
         import argparse
+
         parser = argparse.ArgumentParser(description=__doc__)
         for arg in "verbose quiet failfast catch buffer".split():
             parser.add_argument("-" + arg[0], "--" + arg, nargs="?")

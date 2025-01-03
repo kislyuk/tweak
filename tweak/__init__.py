@@ -1,8 +1,10 @@
-#!/usr/bin/env python3
-
-from __future__ import print_function, unicode_literals, division, absolute_import
-
-import os, sys, json, errno, atexit, logging, glob
+import atexit
+import errno
+import glob
+import json
+import logging
+import os
+import sys
 from collections import OrderedDict
 from collections.abc import Mapping, MutableMapping
 
@@ -26,12 +28,21 @@ class Config(MutableMapping):
 
         >>> {'host': 'example.com', 'port': 9000, 'nested_config': {'foo': True}}
     """
+
     _site_config_home = "/etc"
     _user_config_home = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, name=os.path.basename(__file__), save_on_exit=True, autosave=False, use_yaml=False,
-                 allow_includes=False, _parent=None, _data=None):
+    def __init__(
+        self,
+        name=os.path.basename(__file__),
+        save_on_exit=True,
+        autosave=False,
+        use_yaml=False,
+        allow_includes=False,
+        _parent=None,
+        _data=None,
+    ):
         """
         :param name:
             Name of the application that this config belongs to. This will be used as the name of the config directory.
@@ -63,7 +74,7 @@ class Config(MutableMapping):
     def config_files(self):
         config_files = [
             os.path.join(self._site_config_home, self._name, "config.yml" if self._use_yaml else "config.json"),
-            os.path.join(self._user_config_home, self._name, "config.yml" if self._use_yaml else "config.json")
+            os.path.join(self._user_config_home, self._name, "config.yml" if self._use_yaml else "config.json"),
         ]
         config_var = self._name.upper() + "_CONFIG_FILE"
         if config_var in os.environ:
@@ -108,6 +119,7 @@ class Config(MutableMapping):
                 def construct_mapping(loader, node):
                     loader.flatten_mapping(node)
                     return self._as_config(yaml.SafeLoader.construct_mapping(loader, node))
+
             ConfigLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, ConfigLoader.construct_mapping)
             return yaml.load(stream, Loader=ConfigLoader) or {}
         else:
